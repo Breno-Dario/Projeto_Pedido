@@ -1,19 +1,21 @@
 package pck_View;
 
 import pck_Control.PedidoControl;
+import pck_Model.UsuarioModel; // Importando a classe PessoalModel
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PedidoView extends JFrame {
     private JTextField dateField1;
     private JTextField valorField2;
     private JPanel jp_mainpanel2;
-    private JComboBox<String> comboBox1; // Assuming this is for selecting a customer
+    private JComboBox<UsuarioModel> comboBox1; // Alterado para o tipo PessoalModel
     private JButton confirmarButton;
 
     public PedidoView() {
@@ -22,6 +24,20 @@ public class PedidoView extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(626, 626);
         setLocationRelativeTo(null);
+
+        // Criar uma lista de pessoas (substitua isso pela sua lógica de banco de dados)
+        List<UsuarioModel> pessoais = new ArrayList<>();
+        pessoais.add(new UsuarioModel(1, "Oliveira da SIlva")); // Usar PessoalModel
+        pessoais.add(new UsuarioModel(2, "Lucas SIlva"));
+        pessoais.add(new UsuarioModel(3, "Lucas Gustavo"));
+        pessoais.add(new UsuarioModel(4, "Giovanna Maria"));
+
+        // Popular o JComboBox com as pessoas
+        DefaultComboBoxModel<UsuarioModel> model = new DefaultComboBoxModel<>();
+        for (UsuarioModel pessoal : pessoais) {
+            model.addElement(pessoal);
+        }
+        comboBox1.setModel(model);
 
         confirmarButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -34,16 +50,16 @@ public class PedidoView extends JFrame {
         String data = dateField1.getText().trim();
         String valorText = valorField2.getText().trim();
 
-        // Validate inputs
+        // Validar entradas
         if (data.isEmpty() || valorText.isEmpty()) {
             showErrorMessage("Por favor, preencha todos os campos.");
             return;
         }
 
-        // Validate date format
+        // Validar formato de data
         LocalDate parsedDate;
         try {
-            parsedDate = LocalDate.parse(data); // Adjust format if necessary
+            parsedDate = LocalDate.parse(data); // Ajuste o formato se necessário
         } catch (DateTimeParseException e) {
             showErrorMessage("Data inválida. Por favor, insira uma data válida (yyyy-MM-dd).");
             return;
@@ -51,9 +67,9 @@ public class PedidoView extends JFrame {
 
         try {
             double valorDouble = Double.parseDouble(valorText);
-            int a01_codigo = comboBox1.getSelectedIndex(); // Example for using comboBox1
+            int a01_codigo = ((UsuarioModel) comboBox1.getSelectedItem()).getId(); // Obter o ID da pessoa selecionada
             PedidoControl inserirPedido = new PedidoControl();
-            inserirPedido.inserirPedido(data, String.valueOf(valorDouble), a01_codigo); // Adjusted method call
+            inserirPedido.inserirPedido(data, String.valueOf(valorDouble), a01_codigo); // Chamada do método ajustada
 
             JOptionPane.showMessageDialog(null,
                     "Cadastro realizado com sucesso!",
